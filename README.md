@@ -12,13 +12,13 @@
 
 ## What This Is
 
-This project predicts **Absorption, Distribution, Metabolism, Excretion, and Toxicity (ADMET)** properties of drug candidate molecules. It is built on the **Tox21 dataset** — the industry-standard benchmark used by the FDA and NIH for computational toxicology — and implements an **AttentiveFP Graph Neural Network** via DeepChem.
+This project predicts **Absorption, Distribution, Metabolism, Excretion, and Toxicity (ADMET)** properties of drug candidate molecules. It is built on the **Tox21 dataset**, the industry-standard benchmark used by the FDA and NIH for computational toxicology, and implements an **AttentiveFP Graph Neural Network** via DeepChem.
 
 But the model is half the story.
 
-The distinguishing feature of this project is a **two-layer validation framework** that doesn't treat the model as a black box oracle. Layer 1 is standard ML evaluation. Layer 2 applies medicinal chemistry knowledge to audit the model's predictions — flagging cases where the model's statistical confidence conflicts with known chemical toxicophores.
+The distinguishing feature of this project is a **two-layer validation framework** that doesn't treat the model as a black box oracle. Layer 1 is standard ML evaluation. Layer 2 applies medicinal chemistry knowledge to audit the model's predictions, flagging cases where the model's statistical confidence conflicts with known chemical toxicophores.
 
-**This project exists to demonstrate that the most dangerous prediction an AIDD model can make is a false negative on toxicity** — and that catching those requires domain knowledge, not just a better AUC score.
+**This project exists to demonstrate that the most dangerous prediction an AIDD model can make is a false negative on toxicity**, and that catching those requires domain knowledge, not just a better AUC score.
 
 ---
 
@@ -52,7 +52,7 @@ Scaffold splitting is intentional: it tests generalisation to structurally **nov
 After the model produces predictions, I manually reviewed cases where model confidence and structural chemistry disagreed. The validator implements rule-based screening using curated SMARTS patterns derived from:
 
 - Brenk et al. (2008) structural alerts
-- PAINS filters (Baell & Holloway, 2010) — 480 pan-assay interference series
+- PAINS filters (Baell & Holloway, 2010), 480 pan-assay interference series
 - FAF-Drugs4 reactive group library
 - ICH M7 mutagenicity structural alerts
 
@@ -60,7 +60,7 @@ After the model produces predictions, I manually reviewed cases where model conf
 
 | Category | Meaning | Action |
 |---|---|---|
-| `false_safe` | Model says safe; chemistry flags a known toxicophore | **High priority review — do not advance** |
+| `false_safe` | Model says safe; chemistry flags a known toxicophore | **High priority review, do not advance** |
 | `uncertain_toxic` | Model says toxic; no structural alerts | Investigate SHAP values; may be a false positive |
 | `aligned_toxic` | Model and chemistry both flag toxic | High confidence; deprioritise |
 | `aligned_safe` | Model says safe; no alerts | Standard follow-up assays |
@@ -73,7 +73,7 @@ These are real cases drawn from running the validator on Tox21 test-set predicti
 
 ---
 
-**Case 1 — False Safe: Aldehyde**
+**Case 1 - False Safe: Aldehyde**
 
 > The model assigned a toxicity probability of **0.09** to this benzaldehyde derivative for the NR-AhR assay, classifying it as non-toxic.
 >
@@ -83,7 +83,7 @@ These are real cases drawn from running the validator on Tox21 test-set predicti
 
 ---
 
-**Case 2 — False Safe: Nitroaromatic**
+**Case 2 - False Safe: Nitroaromatic**
 
 > The model assigned a toxicity probability of **0.14** to this 4-substituted nitrobenzene derivative for the SR-p53 assay.
 >
@@ -93,7 +93,7 @@ These are real cases drawn from running the validator on Tox21 test-set predicti
 
 ---
 
-**Case 3 — Uncertain Toxic: No Structural Alerts**
+**Case 3 - Uncertain Toxic: No Structural Alerts**
 
 > The model assigned a toxicity probability of **0.81** to aspirin (acetylsalicylic acid) for the NR-AR assay, despite this compound having no classical structural alerts.
 >
@@ -105,7 +105,7 @@ These are real cases drawn from running the validator on Tox21 test-set predicti
 
 ---
 
-**Case 4 — PAINS Interference: Rhodanine**
+**Case 4 - PAINS Interference: Rhodanine**
 
 > The model assigned a toxicity probability of **0.72** to a rhodanine-containing compound for SR-ARE.
 >
