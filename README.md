@@ -162,13 +162,13 @@ admet-toxicity-predictor/
 
 AttentiveFP (Xiong et al., 2020) uses graph attention mechanisms that assign importance weights to individual atoms and bonds during message passing. This gives two practical advantages for toxicity prediction:
 
-1. **Motif sensitivity:** The attention heads learn to focus on toxicophoric substructures — the model can weight an epoxide ring differently from a saturated carbon even if they appear in similar molecular contexts.
+1. **Motif sensitivity:** The attention heads learn to focus on toxicophoric substructures, the model can weight an epoxide ring differently from a saturated carbon even if they appear in similar molecular contexts.
 
 2. **Explainability bridge:** Attention weights provide an initial qualitative explanation of which atoms drove the prediction, which then gets validated by the Layer 2 chemistry screen.
 
 ### Why SHAP over Model-Internal Attention?
 
-Attention weights tell us which atoms were attended to. SHAP values tell us the counterfactual contribution of each feature to the output — answering *"how much would the prediction change if this atom environment were absent?"* These are complementary, not redundant. High attention + low SHAP = the atom was important for the computation but didn't directionally drive the toxicity prediction. High SHAP = directional importance.
+Attention weights tell us which atoms were attended to. SHAP values tell us the counterfactual contribution of each feature to the output, answering *"how much would the prediction change if this atom environment were absent?"* These are complementary, not redundant. High attention + low SHAP = the atom was important for the computation but didn't directionally drive the toxicity prediction. High SHAP = directional importance.
 
 For fingerprint baselines, TreeSHAP (exact, O(TLD) complexity) is used rather than permutation SHAP, making explanation tractable for RandomForest with 300 trees.
 
@@ -178,7 +178,7 @@ Random splits allow test molecules to share scaffolds (core ring systems) with t
 
 ### Class Imbalance Handling
 
-Tox21 is heavily imbalanced — some assays have < 5% positive labels. The pipeline handles this via:
+Tox21 is heavily imbalanced, some assays have < 5% positive labels. The pipeline handles this via:
 
 - `class_weight="balanced"` in all sklearn baselines
 - `scale_pos_weight` in XGBoost
