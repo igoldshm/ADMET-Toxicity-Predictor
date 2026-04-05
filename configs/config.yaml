@@ -1,0 +1,92 @@
+# configs/config.yaml
+# Hydra configuration for ADMET Toxicity Predictor
+# Run: python src/pipeline.py --config-path ../configs --config-name config
+
+defaults:
+  - _self_
+  - model: gnn          # gnn | rf | xgboost | logreg
+  - featurizer: graph   # graph | ecfp | maccs | rdkit
+
+# ── Experiment metadata ───────────────────────────────────────────────────
+experiment:
+  name: "tox21_attentivefp_scaffold"
+  seed: 42
+  output_dir: "results/${experiment.name}"
+  log_level: "INFO"
+
+# ── Dataset ───────────────────────────────────────────────────────────────
+data:
+  tasks:
+    - "NR-AR"
+    - "NR-AR-LBD"
+    - "NR-AhR"
+    - "NR-Aromatase"
+    - "NR-ER"
+    - "NR-ER-LBD"
+    - "NR-PPAR-gamma"
+    - "SR-ARE"
+    - "SR-ATAD5"
+    - "SR-HSE"
+    - "SR-MMP"
+    - "SR-p53"
+
+  splitter: "scaffold"     # scaffold | random | stratified | fingerprint
+  frac_train: 0.80
+  frac_valid: 0.10
+  frac_test:  0.10
+  data_cache_dir: "${experiment.output_dir}/data_cache"
+
+# ── GNN hyperparameters ───────────────────────────────────────────────────
+model:
+  _target_: src.models.gnn_model.GNNConfig
+  hidden_channels: 200
+  num_layers: 2
+  num_timesteps: 2
+  dropout: 0.2
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-5
+  batch_size: 64
+  n_epochs: 50
+  patience: 10           # early stopping patience (epochs without val AUC improvement)
+  use_class_weights: true
+  checkpoint_dir: "${experiment.output_dir}/checkpoints"
+
+# ── Featurizer ────────────────────────────────────────────────────────────
+featurizer:
+  type: "GraphConv"       # for GNN; ECFP used automatically for baselines
+  ecfp_radius: 2
+  ecfp_size: 2048
+  use_chirality: true
+
+# ── Baselines ─────────────────────────────────────────────────────────────
+baselines:
+  run: true
+  models:
+    - RandomForest
+    - XGBoost
+    - LogisticRegression
+    - NaiveBayes
+
+# ── SHAP explainability ───────────────────────────────────────────────────
+shap:
+  run: true
+  n_background_samples: 200
+  n_explain_samples: 100
+  task_for_deep_dive: "NR-AhR"   # task to generate detailed SHAP analysis
+  save_plots: true
+
+# ── Layer 2: Chemistry validation ─────────────────────────────────────────
+chemistry_validation:
+  run: true
+  toxicity_threshold: 0.50
+  safe_concern_threshold: 0.30   # prob below this + high alert → false_safe
+  include_aligned_in_report: false
+  export_reviewer_notes: true
+
+# ── Evaluation metrics ────────────────────────────────────────────────────
+metrics:
+  primary: "roc_auc_score"
+  secondary:
+    - "f1_score"
+    - "accuracy_score"
+    - "average_precision_score"   # AUC-PR — better for imbalanced tasks
