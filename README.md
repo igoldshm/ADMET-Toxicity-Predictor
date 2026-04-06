@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-pytest-passing-brightgreen.svg)](#testing)
 
-> **A graph neural network that predicts drug toxicity across 12 biological assays — then has its predictions interrogated by the developer's chemistry intuition.**
+> **A graph neural network that predicts drug toxicity across 12 biological assays - then has its predictions interrogated by the developer's chemistry intuition.**
 
 ---
 
